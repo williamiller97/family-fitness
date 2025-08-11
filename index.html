@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Family Fitness Challenge</title>
+  <meta name="theme-color" content="#0f172a"/>
+  <link rel="icon" href="data:," />
+  <style>
+    :root{
+      --bg:#0b1220; --surface:#0f172a; --card:#0b1426;
+      --muted:#9aa4b2; --text:#e5e7eb;
+      --primary:#60a5fa; --accent:#34d399;
+      --danger:#f87171; --warning:#fbbf24; --ok:#22c55e;
+      --ring:rgba(96,165,250,.25);
+      --shadow:0 12px 40px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 800px at 20% -5%, rgba(37,99,235,.15), transparent 50%),
+        radial-gradient(900px 600px at 120% 20%, rgba(16,185,129,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
+      letter-spacing:.2px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--primary);text-decoration:none}
+    h1,h2,h3{margin:0 0 .6rem}
+    .wrap{max-width:1120px;margin:0 auto;padding:20px}
+    .center{display:grid;place-items:center;min-height:100dvh;padding:24px}
+    .grid{display:grid;gap:16px}
+    .grid.cols-2{grid-template-columns:1fr 1fr}
+    .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    @media (max-width:980px){.grid.cols-3,.grid.cols-2{grid-template-columns:1fr}}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.06); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:20px; backdrop-filter:saturate(140%) blur(6px);
+      transition:.25s ease transform,.25s ease box-shadow;
+    }
+    .card:hover{transform:translateY(-2px);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+    .surface{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:.7rem 1rem;border-radius:12px;border:none;
+      font-weight:700;letter-spacing:.3px;background:rgba(255,255,255,.08);color:var(--text);cursor:pointer;
+      transition:.2s ease transform,.2s ease background,.2s ease opacity,.2s ease box-shadow; user-select:none}
+    .btn:hover{box-shadow:0 4px 14px rgba(2,6,23,.18)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(90deg, var(--primary), var(--accent));color:#051225}
+    .btn.warn{background:linear-gradient(90deg, var(--warning), #ef4444);color:#121212}
+    .btn.ghost{background:transparent;outline:1px solid rgba(255,255,255,.18)}
+    .btn.small{padding:.5rem .75rem;border-radius:10px;font-weight:600}
+    .btn.block{display:flex;justify-content:center;width:100%}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .right{margin-left:auto}
+
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+    .label{font-size:.9rem;color:var(--muted)}
+    .input,.select,.textarea{
+      width:100%;padding:.85rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);color:var(--text);outline:none;transition:border .2s, box-shadow .2s
+    }
+    .input:focus,.select:focus,.textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--ring)}
+    .help{font-size:.85rem;color:var(--muted)}
+    .error{color:var(--danger);font-size:.9rem}
+    .success{color:var(--ok);font-size:.9rem}
+
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:.35rem .6rem;border-radius:999px;background:rgba(255,255,255,.08);font-size:.85rem}
+    .pill.ok{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.35)}
+    .pill.warn{background:rgba(251,191,36,.15);color:#fde68a;border:1px solid rgba(251,191,36,.35)}
+    .pill.danger{background:rgba(248,113,113,.15);color:#fecaca;border:1px solid rgba(248,113,113,.35)}
+
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+    thead th{font-size:.85rem;color:#a5b4fc;text-transform:uppercase;letter-spacing:.7px}
+
+    nav{
+      position:sticky;top:0;z-index:40;
+      background:linear-gradient(180deg, rgba(2,6,23,.9), rgba(2,6,23,.6));
+      border-bottom:1px solid rgba(255,255,255,.06); backdrop-filter: blur(8px);
+    }
+    .navwrap{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.5px}
+    .brand .logo{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(135deg,var(--primary), var(--accent));color:#051225;font-weight:900}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{padding:.5rem .8rem;border-radius:10px;color:var(--muted);cursor:pointer}
+    .tab.active{background:rgba(255,255,255,.08);color:var(--text);font-weight:700}
+    .spacer{flex:1}
+    .userchip{display:flex;align-items:center;gap:8px;padding:.4rem .6rem;border-radius:999px;background:rgba(255,255,255,.06)}
+    .avatar{width:24px;height:24px;border-radius:9999px;object-fit:cover;border:1px solid rgba(255,255,255,.25)}
+    .hide{display:none !important}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
+
+    #toast{position:fixed;right:16px;bottom:16px;display:grid;gap:10px;z-index:50}
+    .toast{padding:.8rem 1rem;border-radius:12px;background:#0b1220;border:1px solid rgba(255,255,255,.12);box-shadow:var(--shadow);color:#fff}
+    .toast, .fx-msg{font-family:ui-rounded,"SF Pro Rounded","Nunito","Quicksand",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;letter-spacing:.2px}
+
+    .fade-in{animation:fade .35s ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .spin{animation:spin 1.1s linear infinite}
+    @keyframes spin{to{transform:rotate(1turn)}}
+    footer{opacity:.7;font-size:.9rem;padding:24px 0;text-align:center}
+
+    /* Chart area */
+    #analyticsWrap{margin-top:22px}
+    #barCanvas{width:100%;height:260px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px}
+
+    /* === Celebration FX (full-screen overlay) === */
+    .fx{position:fixed; inset:0; z-index:9999; display:none; place-items:center;
+      background:radial-gradient(1200px 800px at 60% -10%, rgba(96,165,250,.18), transparent 55%),
+                 radial-gradient(900px 600px at -20% 120%, rgba(52,211,153,.15), transparent 60%),
+                 rgba(2,6,23,.8);
+      backdrop-filter: blur(8px) saturate(120%);
+    }
+    .fx.show{display:grid}
+    .fx-scene{position:relative; width:min(1000px, 92vw); height:min(560px, 72vh); border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08); overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.5);
+    }
+    .fx-track{position:absolute; left:0; right:0; bottom:12%; top:20%}
+    .fx-avatar{position:absolute; width:120px; height:120px; border-radius:9999px; object-fit:cover;
+      border:3px solid rgba(255,255,255,.7); box-shadow:0 10px 30px rgba(0,0,0,.45); filter:drop-shadow(0 10px 18px rgba(0,0,0,.4));
+      animation:fxAcross var(--fx-dur, 10s) linear forwards, fxBob .9s ease-in-out infinite;
+    }
+    .fx-running .fx-avatar{animation-name:fxAcross, fxBobRun}
+    .fx-cycling .fx-avatar{animation-name:fxAcross, fxBob}
+    .fx-swimming .fx-avatar{animation-name:fxAcross, fxSwimBob}
+    .fx-walking .fx-avatar{animation-name:fxAcross, fxBobSlow}
+    @keyframes fxAcross{from{transform:translate(-20vw,0)} to{transform:translate(120vw,0)}}
+    @keyframes fxBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes fxBobRun{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    @keyframes fxBobSlow{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes fxSwimBob{0%,100%{transform:translateY(6px)}50%{transform:translateY(-10px)}}
+
+    .fx-props{position:absolute; inset:0; pointer-events:none}
+    .fx-emoji{position:absolute; font-size:28px; opacity:.95; animation:fxFloat 1.6s ease-out forwards}
+    @keyframes fxFloat{from{transform:translateY(0) scale(1); opacity:1} to{transform:translateY(-80px) scale(1.1); opacity:0}}
+
+    .fx-ground{position:absolute; left:-10%; width:120%; bottom:6%; height:6px; border-radius:9999px;
+      background:linear-gradient(90deg, rgba(96,165,250,.7), rgba(52,211,153,.7));
+      filter:blur(0.5px); opacity:.75
+    }
+    .fx-water{position:absolute; left:-10%; width:120%; bottom:8%; height:22%;
+      background:repeating-linear-gradient(180deg, rgba(59,130,246,.25) 0 8px, rgba(56,189,248,.28) 8px 16px);
+      border-top:1px solid rgba(255,255,255,.25); filter:blur(.2px)
+    }
+    .fx-cloud{position:absolute; top:10%; width:120px; height:36px; background:rgba(255,255,255,.15); border-radius:9999px; filter:blur(1px);
+      animation:fxCloud 16s linear infinite; }
+    .fx-cloud::after{content:""; position:absolute; right:12px; top:-10px; width:60px; height:36px; background:rgba(255,255,255,.12); border-radius:9999px}
+    @keyframes fxCloud{from{transform:translateX(-20vw)} to{transform:translateX(120vw)}}
+    .fx-msg{position:absolute; left:20px; top:20px; font-weight:800; font-size:22px;
+      background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.15); padding:.5rem .8rem; border-radius:12px}
+    .fx-skip{position:absolute; right:14px; top:14px}
+    .fx-countdown{position:absolute; left:0; right:0; height:6px; bottom:0; background:rgba(255,255,255,.08)}
+    .fx-countdown #fxBar{height:100%; width:100%; background:linear-gradient(90deg, #60a5fa, #34d399)}
+    @media (prefers-reduced-motion: reduce){ .fx-avatar,.fx-emoji,.fx-cloud{animation:none !important} }
+
+    /* --- Left-side Background Avatar (animated) --- */
+    .hero-avatar{position:fixed;left:-12px;bottom:-8px;width:300px;height:440px;opacity:.92;pointer-events:none;z-index:0;filter:drop-shadow(0 20px 50px rgba(0,0,0,.45))}
+    .hero-avatar svg{width:100%;height:100%}
+    @media (max-width:1024px){.hero-avatar{display:none}}
+    #bgAvatar .skin{fill:#fed7aa} #bgAvatar .shirt{fill:#60a5fa} #bgAvatar .shorts{fill:#0ea5e9} #bgAvatar .shoe{fill:#e5e7eb} #bgAvatar .accent{fill:#34d399} #bgAvatar .band{fill:#f472b6}
+    .anim-run .arm-left,.anim-run .arm-right,.anim-run .leg-left,.anim-run .leg-right{transform-box:fill-box;transform-origin:center top}
+    .anim-run .arm-left{animation:armL .6s ease-in-out infinite alternate}
+    .anim-run .arm-right{animation:armR .6s ease-in-out infinite alternate}
+    .anim-run .leg-left{animation:legL .6s ease-in-out infinite alternate}
+    .anim-run .leg-right{animation:legR .6s ease-in-out infinite alternate}
+    .anim-run .torso{animation:bob .9s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+    @keyframes armL{from{transform:rotate(18deg)}to{transform:rotate(-22deg)}}
+    @keyframes armR{from{transform:rotate(-18deg)}to{transform:rotate(22deg)}}
+    @keyframes legL{from{transform:rotate(-10deg) translateY(0)}to{transform:rotate(18deg) translateY(2px)}}
+    @keyframes legR{from{transform:rotate(18deg) translateY(0)}to{transform:rotate(-10deg) translateY(2px)}}
+    @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="hide" id="nav">
+    <div class="navwrap">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">FF</div>
+        <div>Family Fitness Challenge</div>
+      </div>
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-view="dashboard">Dashboard</div>
+        <div class="tab" data-view="leaderboard">Leaderboard</div>
+        <div class="tab hide" data-view="admin">Admin</div>
+        <div class="tab" data-view="settings">Settings</div>
+        <div class="tab" data-view="story">Story</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="userchip" id="userChip" aria-live="polite"></div>
+      <button class="btn small ghost" id="logoutBtn" title="Sign out">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Background cartoon avatar (left) -->
+  <div id="bgAvatar" class="hero-avatar anim-run" aria-hidden="true">
+    <svg viewBox="0 0 220 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cartoon athlete">
+      <ellipse cx="110" cy="360" rx="70" ry="10" fill="rgba(0,0,0,.35)"/>
+      <g class="leg-left">
+        <rect x="96"  y="176" width="12" height="56" rx="6" class="skin"/>
+        <rect x="92"  y="226" width="20" height="10" rx="4" class="shoe"/>
+      </g>
+      <g class="leg-right">
+        <rect x="122" y="176" width="12" height="56" rx="6" class="skin"/>
+        <rect x="118" y="226" width="20" height="10" rx="4" class="shoe"/>
+      </g>
+      <g class="torso">
+        <rect x="92"  y="154" width="36" height="22" rx="6" class="shorts"/>
+        <rect x="90"  y="96"  width="40" height="60" rx="12" class="shirt"/>
+        <circle cx="110" cy="70"  r="24" class="skin"/>
+        <rect   x="92"  y="62"  width="36" height="10" rx="5" class="band"/>
+        <rect   x="100" y="116" width="20" height="10" rx="4" class="accent" opacity=".35"/>
+      </g>
+      <g class="arm-left">
+        <rect x="84"  y="116" width="12" height="50" rx="6" class="skin"/>
+        <circle cx="90"  cy="168" r="6" class="skin"/>
+      </g>
+      <g class="arm-right">
+        <rect x="134" y="116" width="12" height="50" rx="6" class="skin"/>
+        <circle cx="140" cy="168" r="6" class="skin"/>
+      </g>
+      <g opacity=".5">
+        <circle cx="40" cy="200" r="3" fill="#60a5fa"/>
+        <circle cx="60" cy="150" r="3" fill="#34d399"/>
+        <circle cx="50" cy="260" r="3" fill="#a78bfa"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- LOGIN / SETUP -->
+  <main id="authView" class="center">
+    <div class="card" style="max-width:560px;width:100%">
+      <h2>Sign in</h2>
+      <p class="help">Use your participant account. An admin account is pre-seeded on first load.</p>
+
+      <div id="firstRunBox" class="surface hide" style="margin:12px 0">
+        <div class="row"><span class="pill warn">First-time setup</span><div class="right"></div></div>
+        <p class="help" style="margin:.4rem 0 0">Create the admin manually only if you disabled seeding.</p>
+      </div>
+
+      <form id="loginForm" aria-label="Login form">
+        <div class="grid cols-2">
+          <div class="field"><label class="label" for="loginUser">Username</label><input class="input" id="loginUser" name="username" autocomplete="username" required placeholder="e.g. alex"/></div>
+          <div class="field"><label class="label" for="loginPass">Password</label><input class="input" id="loginPass" name="password" type="password" autocomplete="current-password" required placeholder="••••••••"/></div>
+        </div>
+        <div class="row" style="justify-content:space-between">
+          <label class="label"><input type="checkbox" id="keepSigned" /> Keep me signed in</label>
+          <button class="btn primary" id="loginBtn" type="submit">Sign in</button>
+        </div>
+        <div id="loginMsg" class="error" style="min-height:1.2rem;margin-top:8px"></div>
+      </form>
+
+      <form id="setupForm" class="hide" style="margin-top:12px" aria-label="Admin setup form">
+        <h3 style="margin-top:6px">Create admin</h3>
+        <div class="grid cols-2">
+          <div class="field"><label class="label" for="setupUser">Admin username</label><input class="input" id="setupUser" name="username" required placeholder="admin"/></div>
+          <div class="field"><label class="label" for="setupPass">Password</label><input class="input" id="setupPass" name="password" type="password" minlength="8" required placeholder="At least 8 characters"/></div>
+        </div>
+        <button class="btn primary block" type="submit">Set up</button>
+        <p class="help">This manual setup is optional; the app already seeds one admin.</p>
+      </form>
+    </div>
+  </main>
+
+  <!-- APP VIEWS -->
+  <div id="app" class="wrap hide">
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="fade-in">
+      <div class="row" style="margin:10px 0 18px">
+        <h2 style="display:flex;align-items:center;gap:10px">
+          Dashboard <span id="pointsBadge" class="pill ok">0 pts</span>
+        </h2>
+        <div class="right pill" id="motd"></div>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;align-items:center">
+            <h3>Log activity</h3>
+            <div class="pill" id="streakPill" title="Consecutive days with activity">🔥 0-day streak</div>
+          </div>
+
+          <form id="logForm">
+            <div class="grid cols-2">
+              <div class="field">
+                <label class="label" for="activitySelect">Activity</label>
+                <select class="select" name="activityId" id="activitySelect"></select>
+              </div>
+              <div class="field">
+                <label class="label" for="logDate">Date</label>
+                <input class="input" id="logDate" type="date" name="date" required />
+              </div>
+              <div class="field">
+                <label class="label" for="logKm">Distance (km)</label>
+                <input class="input" id="logKm" type="number" name="distance" min="0" step="0.01" placeholder="0" />
+                <div class="help">Optional. Uses per-km multiplier.</div>
+              </div>
+              <div class="field">
+                <label class="label" for="logMin">Time (min)</label>
+                <input class="input" id="logMin" type="number" name="minutes" min="0" step="1" placeholder="0" />
+                <div class="help">Optional. Uses per-minute multiplier.</div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label" for="logNotes">Notes</label>
+              <textarea class="textarea" id="logNotes" name="notes" rows="2" placeholder="Felt great!"></textarea>
+            </div>
+            <div class="row">
+              <div class="right row">
+                <button class="btn primary" type="submit">Add log</button>
+                <span id="logPointsPreview" class="pill" title="Estimated points (after your multiplier)">0 pts</span>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="row" style="margin-bottom:8px">
+            <h3>My history</h3>
+            <div class="spacer"></div>
+            <div class="row">
+              <input id="historySearch" class="input" placeholder="Search… (activity/note)" style="width:210px">
+              <div class="pill" id="myTotal"></div>
+            </div>
+          </div>
+          <div class="surface" style="max-height:240px;overflow:auto" id="myHistory">
+            <table>
+              <thead><tr><th>Date</th><th>Activity</th><th>Km</th><th>Min</th><th>Points</th><th></th></tr></thead>
+              <tbody id="myRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics (Horizontal Bar) -->
+      <div id="analyticsWrap" class="card">
+        <div class="row" style="justify-content:space-between">
+          <h3>Activity distribution</h3>
+          <div class="row">
+            <label class="label" for="analyticsRange">Range</label>
+            <select id="analyticsRange" class="select small" style="padding:.55rem .7rem">
+              <option value="week">This week</option>
+              <option value="month">This month</option>
+              <option value="year">This year</option>
+            </select>
+            <span class="pill" id="analyticsMsg">–</span>
+          </div>
+        </div>
+        <canvas id="barCanvas" width="1040" height="260" aria-label="Horizontal bar chart"></canvas>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="view-leaderboard" class="hide fade-in">
+      <div class="row" style="margin:10px 0 18px">
+        <h2>Leaderboard</h2>
+        <div class="spacer"></div>
+        <label class="label" for="boardMode" style="margin-right:6px">View</label>
+        <select id="boardMode" class="select small" style="padding:.55rem .7rem">
+          <option value="all" selected>All-time</option>
+          <option value="week">This week</option>
+        </select>
+        <button class="btn ghost small" id="refreshBoard">Refresh</button>
+      </div>
+
+      <!-- Main leaderboard table (All-time / This week) -->
+      <div class="card">
+        <table>
+          <thead><tr><th>#</th><th>Participant</th><th>Total Points</th><th>Entries</th></tr></thead>
+        <tbody id="boardRows"></tbody>
+        </table>
+      </div>
+
+      <!-- Annual standings: Weeks Won -->
+      <div class="card" style="margin-top:16px">
+        <div class="row">
+          <h3>Annual standings — Weeks won</h3>
+          <div class="spacer"></div>
+          <label class="label" for="weeksYear" style="margin-right:6px">Year</label>
+          <input id="weeksYear" class="input" type="number" style="width:110px" />
+        </div>
+        <div class="surface" style="max-height:340px;overflow:auto;margin-top:10px">
+          <table>
+            <thead><tr><th>#</th><th>Participant</th><th>Weeks won</th></tr></thead>
+            <tbody id="weeksRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="view-admin" class="hide fade-in">
+      <div class="row" style="margin:10px 0 18px">
+        <h2>Admin panel</h2>
+        <span class="pill warn">You are an admin</span>
+      </div>
+
+      <div class="grid cols-3">
+        <div class="card">
+          <h3>Participants</h3>
+          <form id="userForm" class="surface" style="margin:10px 0">
+            <div class="grid cols-2">
+              <div class="field"><label class="label">Username</label><input class="input" name="username" required /></div>
+              <div class="field"><label class="label">Password</label><input class="input" name="password" type="password" required /></div>
+              <div class="field"><label class="label">Multiplier</label><input class="input" name="mult" type="number" step="0.1" min="0" value="1" /></div>
+            </div>
+            <div class="row">
+              <label class="label"><input type="checkbox" name="isAdmin"/> Admin</label>
+              <div class="spacer"></div>
+              <button class="btn primary small" type="submit">Add / Update</button>
+            </div>
+          </form>
+          <div class="surface" style="max-height:300px;overflow:auto">
+            <table>
+              <thead><tr><th>User</th><th>Role</th><th>Mult</th><th></th></tr></thead>
+              <tbody id="userRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Activities & multipliers</h3>
+          <form id="activityForm" class="surface" style="margin:10px 0">
+            <div class="grid cols-2">
+              <div class="field"><label class="label">Name</label><input class="input" name="name" required placeholder="Running"/></div>
+              <div class="field"><label class="label">Icon</label><input class="input" name="icon" placeholder="🏃"/></div>
+              <div class="field"><label class="label">Points per km</label><input class="input" type="number" step="0.01" min="0" name="ppk" value="1"/></div>
+              <div class="field"><label class="label">Points per min</label><input class="input" type="number" step="0.01" min="0" name="ppm" value="0.2"/></div>
+            </div>
+            <button class="btn primary small" type="submit">Add / Update</button>
+          </form>
+          <div class="surface" style="max-height:300px;overflow:auto">
+            <table>
+              <thead><tr><th>Activity</th><th>per km</th><th>per min</th><th></th></tr></thead>
+              <tbody id="activityRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>All logs</h3>
+          <div class="surface" style="max-height:240px;overflow:auto">
+            <table>
+              <thead><tr><th>Date</th><th>User</th><th>Activity</th><th>Km</th><th>Min</th><th>Pts</th></tr></thead>
+              <tbody id="allLogsRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" class="hide fade-in">
+      <div class="row" style="margin:10px 0 18px">
+        <h2>Settings</h2>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Export / Import</h3>
+          <div class="row" style="margin:8px 0">
+            <button class="btn" id="exportBtn">Export JSON</button>
+            <input type="file" id="importInput" accept="application/json" class="hide"/>
+            <button class="btn" id="importBtn">Import JSON</button>
+          </div>
+          <p class="help">Data is stored in your browser's localStorage under <span class="mono">ffc:data</span>. Export regularly for backups.</p>
+        </div>
+        <div class="card">
+          <h3>Change my password</h3>
+          <form id="passForm">
+            <div class="grid cols-2">
+              <div class="field"><label class="label">Current password</label><input class="input" type="password" name="old" required /></div>
+              <div class="field"><label class="label">New password</label><input class="input" type="password" name="new" minlength="8" required /></div>
+            </div>
+            <button class="btn primary small" type="submit">Update password</button>
+          </form>
+          <div id="passMsg" class="help"></div>
+        </div>
+        <div class="card">
+          <h3>My profile picture</h3>
+          <form id="avatarForm">
+            <div class="row">
+              <input type="file" id="avatarInput" accept="image/*" />
+              <button class="btn small" type="submit">Save</button>
+              <button class="btn small ghost" id="avatarRemove" type="button">Remove</button>
+            </div>
+            <p class="help">Square images work best. Stored locally in your browser.</p>
+          </form>
+        </div>
+      </div>
+      <footer>Built for offline use. No servers, no trackers.</footer>
+    </section>
+
+    <!-- STORY -->
+    <section id="view-story" class="hide fade-in">
+      <div class="row" style="margin:10px 0 18px">
+        <h2>Story & Rules</h2>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>The Story</h3>
+          <p class="help">Your crew signed up for a season of friendly chaos: move your body, rack up points, and rule the leaderboard. Keep a streak, unlock silly celebrations, and cheer each other on.</p>
+          <p class="help">Short on time? Ten minutes still counts. Walking totally counts. Bragging rights definitely count.</p>
+        </div>
+        <div class="card">
+          <h3>Your Multiplier</h3>
+          <p class="help">Admins can set a personal multiplier to level the playing field. All your points are multiplied by this number.</p>
+          <div class="pill ok" id="storyMult">x1.00</div>
+        </div>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Rules</h3>
+          <ul class="help" style="line-height:1.6">
+            <li>Log any activity on the Dashboard.</li>
+            <li>Points = (distance × per-km) + (minutes × per-min).</li>
+            <li>Your personal multiplier amplifies the total points from each log.</li>
+            <li>Leaderboard shows totals; Admin can add users/activities.</li>
+            <li>Export/Import JSON to back up your device.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="row" style="margin-bottom:8px"><h3>What your points are worth</h3><div class="spacer"></div><span class="pill">live</span></div>
+          <div class="surface" style="max-height:300px;overflow:auto">
+            <table>
+              <thead><tr><th>Activity</th><th>Base / km</th><th>Base / min</th><th>With your mult / km</th><th>With your mult / min</th></tr></thead>
+              <tbody id="storyRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Celebration overlay -->
+  <div id="fxOverlay" class="fx" aria-hidden="true">
+    <div class="fx-scene" id="fxScene">
+      <div class="fx-msg" id="fxMsg">Nice!</div>
+      <div class="fx-track" id="fxTrack">
+        <div class="fx-ground" id="fxGround"></div>
+        <div class="fx-water hide" id="fxWater"></div>
+        <img id="fxAvatar" class="fx-avatar" alt="Avatar celebration"/>
+        <div class="fx-props" id="fxProps"></div>
+        <div class="fx-cloud" style="left:-10%"></div>
+        <div class="fx-cloud" style="left:20%; animation-delay:4s"></div>
+        <div class="fx-cloud" style="left:60%; animation-delay:8s"></div>
+      </div>
+      <button id="fxSkip" class="btn small ghost fx-skip" type="button">Skip</button>
+      <div class="fx-countdown"><div id="fxBar"></div></div>
+    </div>
+  </div>
+
+  <script>
+  // ------- Utilities -------
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+  const uid=()=>crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
+  const todayStr=()=>new Date().toISOString().slice(0,10);
+  const toast=(msg,type='')=>{const t=document.createElement('div');t.className='toast fade-in '+(type?'pill '+type:'');t.textContent=msg;$('#toast').appendChild(t);setTimeout(()=>t.remove(),3200);};
+
+  // ------- Storage -------
+  const KEY='ffc:data';
+  const defaults=()=>({
+    version:1, users:[], settings:{animations:true,sfx:false},
+    activities:[
+      {id:uid(),name:'Running',icon:'🏃',ppk:1.0,ppm:0.2},
+      {id:uid(),name:'Cycling',icon:'🚴',ppk:0.5,ppm:0.1},
+      {id:uid(),name:'Swimming',icon:'🏊',ppk:1.2,ppm:0.3},
+      {id:uid(),name:'Walking',icon:'🚶',ppk:0.7,ppm:0.15}
+    ],
+    logs:[]
+  });
+  const Store={
+    load(){ const raw=localStorage.getItem(KEY); if(!raw) return null; try{ return JSON.parse(raw); }catch{ return null; } },
+    ensure(){ let raw=localStorage.getItem(KEY); if(!raw){raw=JSON.stringify(defaults()); localStorage.setItem(KEY,raw);} return JSON.parse(raw); },
+    save(db){localStorage.setItem(KEY, JSON.stringify(db));},
+    export(){return JSON.stringify(this.ensure(),null,2);},
+    import(json){try{const d=JSON.parse(json); if(!d.users||!d.activities||!d.logs) throw 0; localStorage.setItem(KEY,JSON.stringify(d)); return true;}catch{return false;}}
+  };
+
+  // ------- Auth (PBKDF2) -------
+  async function pbkdf2(password, saltB64, iterations=120000){
+    const enc=new TextEncoder();
+    const pwKey=await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits','deriveKey']);
+    const salt=Uint8Array.from(atob(saltB64), c=>c.charCodeAt(0));
+    const key=await crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations, hash:'SHA-256'}, pwKey, {name:'AES-GCM', length:256}, true, ['encrypt','decrypt']);
+    const raw=await crypto.subtle.exportKey('raw', key);
+    return btoa(String.fromCharCode(...new Uint8Array(raw)));
+  }
+  const newSalt=()=>{const b=new Uint8Array(16); crypto.getRandomValues(b); return btoa(String.fromCharCode(...b));};
+
+  // Persisted session helpers
+  function setSession(session, persist){
+    sessionStorage.setItem('ffc:session', JSON.stringify(session));
+    if(persist){ localStorage.setItem('ffc:persistSession','1'); localStorage.setItem('ffc:session', JSON.stringify(session)); }
+    else { localStorage.removeItem('ffc:persistSession'); localStorage.removeItem('ffc:session'); }
+  }
+  function getPersistedSession(){
+    const persist = localStorage.getItem('ffc:persistSession')==='1';
+    if(persist){
+      const raw=localStorage.getItem('ffc:session'); if(!raw) return null;
+      try{ return JSON.parse(raw); }catch{ return null; }
+    }
+    return null;
+  }
+  function clearAllSessions(){
+    sessionStorage.removeItem('ffc:session');
+    localStorage.removeItem('ffc:session');
+    localStorage.removeItem('ffc:persistSession');
+  }
+
+  const Auth={
+    session:null,
+    async login(username,password){
+      const db=Store.ensure();
+      const user=db.users.find(u=>u.username.toLowerCase()===String(username).toLowerCase());
+      if(!user) return null;
+      const hash=await pbkdf2(password,user.salt);
+      if(hash!==user.hash) return null;
+      this.session={userId:user.id, username:user.username, isAdmin:!!user.isAdmin};
+      const keep = $('#keepSigned')?.checked;
+      setSession(this.session, keep);
+      return this.session;
+    },
+    logout(){this.session=null; clearAllSessions();},
+    restore(){
+      const persisted = getPersistedSession();
+      if(persisted){ this.session=persisted; return this.session; }
+      const raw=sessionStorage.getItem('ffc:session'); if(!raw) return null;
+      try{ this.session=JSON.parse(raw); return this.session; }catch{ return null; }
+    },
+    async changePassword(oldPw,newPw){
+      const db=Store.ensure(); const u=db.users.find(x=>x.id===this.session.userId);
+      const check=await pbkdf2(oldPw,u.salt); if(check!==u.hash) return {ok:false,msg:'Current password incorrect'};
+      const salt=newSalt(); const hash=await pbkdf2(newPw,salt); u.salt=salt; u.hash=hash; Store.save(db); return {ok:true};
+    }
+  };
+
+  // Seed the requested admin on first load
+  async function seedAdminIfEmpty(){
+    const existing=Store.load();
+    if(existing && Array.isArray(existing.users) && existing.users.length>0) return;
+    const db=defaults();
+    const salt=newSalt();
+    // NOTE: password includes a leading space as requested
+    const hash=await pbkdf2(' alexmiller', salt);
+    db.users.push({ id:uid(), username:'alexmiller', isAdmin:true, mult:1, salt, hash });
+    Store.save(db);
+  }
+
+  // ------- Points helpers -------
+  function calcPoints(activity, km, min){ km=Number(km||0); min=Number(min||0); return +(km*activity.ppk + min*activity.ppm).toFixed(2); }
+  function userTotals(db){
+    const out={}; for(const u of db.users){ out[u.id]={points:0,entries:0,username:u.username,mult:u.mult||1}; }
+    for(const l of db.logs){ const u=out[l.userId]; if(u){ const act=db.activities.find(a=>a.id===l.activityId); const base=calcPoints(act,l.km,l.min); u.points += base*(u.mult||1); u.entries++; } }
+    for(const k in out){ out[k].points=+out[k].points.toFixed(2); } return out;
+  }
+
+  // ====== ISO week + leaderboard helpers ======
+  function startOfISOWeek(d){
+    const x = new Date(d); x.setHours(0,0,0,0);
+    const day = (x.getDay()+6)%7; x.setDate(x.getDate()-day); return x; // Monday start
+  }
+  function endOfISOWeek(d){
+    const s = startOfISOWeek(d); const e = new Date(s);
+    e.setDate(s.getDate()+6); e.setHours(23,59,59,999); return e;
+  }
+  function isoWeekParts(dateStr){
+    const d = new Date(dateStr+'T00:00:00');
+    const target = new Date(d.valueOf());
+    const dayNr = (d.getDay()+6)%7;
+    target.setDate(target.getDate()-dayNr+3); // Thursday
+    const firstThursday = new Date(target.getFullYear(),0,4);
+    const firstDayNr = (firstThursday.getDay()+6)%7;
+    firstThursday.setDate(firstThursday.getDate()-firstDayNr+3);
+    const week = 1 + Math.round((target-firstThursday)/604800000);
+    const year = target.getFullYear();
+    return {year, week};
+  }
+  function totalsInRange(db, fromDate, toDate){
+    const users = Object.fromEntries(db.users.map(u=>[u.id,u]));
+    const acts  = Object.fromEntries(db.activities.map(a=>[a.id,a]));
+    const sums = {};
+    for(const u of db.users){ sums[u.id] = { id:u.id, username:u.username, points:0, entries:0 }; }
+    for(const l of db.logs){
+      const d = new Date(l.date+'T00:00:00');
+      if(d < fromDate || d > toDate) continue;
+      const user = users[l.userId]; if(!user) continue;
+      const act  = acts[l.activityId]; if(!act) continue;
+      const base = calcPoints(act, l.km, l.min);
+      const pts  = +(base*((user.mult)||1)).toFixed(2);
+      sums[user.id].points += pts;
+      sums[user.id].entries += 1;
+    }
+    return Object.values(sums).map(v=>({...v, points:+v.points.toFixed(2)}))
+             .sort((a,b)=> b.points - a.points);
+  }
+
+  // ------- Views -------
+  const views={
+    show(view){
+      $$('#app section').forEach(s=>s.classList.add('hide'));
+      $('#view-'+view).classList.remove('hide');
+      $$('#tabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.view===view));
+      if(view==='story') renderStory();
+      if(view==='dashboard') renderAnalytics();
+      if(view==='leaderboard'){ renderLeaderboard($('#boardMode')?.value || 'all'); renderWeeksWon(Number($('#weeksYear')?.value || new Date().getFullYear())); }
+    },
+    setNavVisible(show){$('#nav').classList.toggle('hide',!show); $('#app').classList.toggle('hide',!show); $('#authView').classList.toggle('hide',show);}
+  };
+
+  // ------- Friendly quips -------
+  const QUIPS={
+    run:['You ran like the wind (or at least a solid breeze)!','Footloose and cardio free!','Stride pride!'],
+    cycle:['Wheelie good ride!','Tour de You!','Spoke-tacular spin!'],
+    swim:['Splash-tacular! 🐬','You’re basically a dolphin now.','Glide + tide = pride.'],
+    walk:['Stroll patrol reporting in.','Steps on steps—nice.','A+ amble!']
+  };
+  function getQuip(activity,pts){
+    const a=(activity||'').toLowerCase();
+    let bucket=QUIPS.run;
+    if(a.includes('cycl')) bucket=QUIPS.cycle; else if(a.includes('swim')) bucket=QUIPS.swim; else if(a.includes('walk')) bucket=QUIPS.walk;
+    const base=(bucket[Math.floor(Math.random()*bucket.length)]||'Nice move!');
+    const flair=pts>=100?' 🔥 Big points!': pts>=50?' 💪 Solid!':' ✅';
+    return base+flair;
+  }
+
+  // ------- Celebration helpers -------
+  function initialsAvatar(name='User'){
+    const parts=String(name).trim().split(/\s+/);
+    const initials=(parts[0]?.[0]||'U').toUpperCase()+(parts[1]?.[0]||'').toUpperCase();
+    const c=document.createElement('canvas'); c.width=256; c.height=256; const ctx=c.getContext('2d');
+    let hash=0; for(const ch of name) hash=(hash*31+ch.charCodeAt(0))|0; const hue=Math.abs(hash)%360;
+    ctx.fillStyle=`hsl(${hue} 70% 42%)`; ctx.beginPath(); ctx.arc(128,128,120,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.92)'; ctx.font='bold 108px system-ui, -apple-system, Segoe UI, Roboto'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(initials,128,138);
+    return c.toDataURL('image/png',0.9);
+  }
+  function showActivityAnimation(activityName, avatarSrc, message, durationMs=10000){
+    const db=Store.ensure(); if(db.settings?.animations===false) return;
+    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){ toast(message||'Nice!','ok'); return; }
+    const overlay=$('#fxOverlay'), scene=$('#fxScene'), avatar=$('#fxAvatar'), props=$('#fxProps'), msg=$('#fxMsg'), ground=$('#fxGround'), water=$('#fxWater'), bar=$('#fxBar');
+    const aKey=(activityName||'').toLowerCase();
+    scene.classList.remove('fx-running','fx-cycling','fx-swimming','fx-walking');
+    if(aKey.includes('run')) scene.classList.add('fx-running'); else if(aKey.includes('cycl')) scene.classList.add('fx-cycling'); else if(aKey.includes('swim')) scene.classList.add('fx-swimming'); else if(aKey.includes('walk')) scene.classList.add('fx-walking');
+    water.classList.toggle('hide', !scene.classList.contains('fx-swimming'));
+    ground.classList.toggle('hide', scene.classList.contains('fx-swimming'));
+    avatar.src=avatarSrc || initialsAvatar(Auth.session?.username || 'User');
+    avatar.style.setProperty('--fx-dur', `${durationMs}ms`);
+    msg.textContent=message || 'Great work!';
+    props.innerHTML='';
+    const bag=aKey.includes('run')?['💨','👟','✨']:aKey.includes('cycl')?['💨','⚙️','✨']:aKey.includes('swim')?['💧','🐬','✨']:aKey.includes('walk')?['🍃','👟','✨']:['⭐','✨','🌟'];
+    const spawn=()=>{const s=document.createElement('span'); s.className='fx-emoji'; s.textContent=bag[Math.floor(Math.random()*bag.length)]; s.style.left=(140+Math.random()*60)+'px'; s.style.bottom=(10+Math.random()*120)+'px'; props.appendChild(s); setTimeout(()=>s.remove(),1600);};
+    const timer=setInterval(spawn,120);
+    bar.style.transition='none'; bar.style.width='100%'; requestAnimationFrame(()=>{bar.style.transition=`width ${durationMs}ms linear`; bar.style.width='0%';});
+    overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+    const close=()=>{overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); clearInterval(timer);};
+    $('#fxSkip').onclick=close; setTimeout(close, durationMs);
+  }
+
+  // ------- Rendering -------
+  function renderUserChip(){
+    if(!Auth.session) return;
+    const db=Store.ensure(); const me=db.users.find(u=>u.id===Auth.session.userId);
+    $('#userChip').innerHTML = `${me?.avatar?`<img class="avatar" src="${me.avatar}" alt="">`:''} ${Auth.session.isAdmin?'🛡️':'🙂'} ${Auth.session.username}`;
+    $('#tabs [data-view="admin"]').classList.toggle('hide', !Auth.session.isAdmin);
+  }
+  function renderActivitiesSelect(){
+    const db=Store.ensure(); $('#activitySelect').innerHTML = db.activities.map(a=>`<option value="${a.id}">${a.icon||'🏷️'} ${a.name}</option>`).join('');
+  }
+  function renderMyHistory(){
+    const db=Store.ensure(); const rows=$('#myRows'); rows.innerHTML='';
+    const meId=Auth.session.userId; const meUser=db.users.find(u=>u.id===meId);
+    const term=($('#historySearch').value||'').toLowerCase();
+    const my=db.logs.filter(l=>l.userId===meId).sort((a,b)=> b.date.localeCompare(a.date));
+    const acts=Object.fromEntries(db.activities.map(a=>[a.id,a])); let total=0;
+    const filtered=my.filter(l=>{ if(!term) return true; const a=acts[l.activityId]; const s=(a?.name||'').toLowerCase()+' '+(l.notes||'').toLowerCase(); return s.includes(term); });
+    for(const l of filtered){
+      const act=acts[l.activityId]; const base=calcPoints(act,l.km,l.min); const pts=+(base*((meUser?.mult)||1)).toFixed(2); total+=pts;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${l.date}</td><td>${(act?.icon||'🏷️')} ${(act?.name||'')}</td><td>${l.km??''}</td><td>${l.min??''}</td><td>${pts}</td><td><button class="btn small ghost" data-del="${l.id}">Delete</button></td>`;
+      rows.appendChild(tr);
+    }
+    $('#myTotal').textContent=`${filtered.length} entries • ${total.toFixed(2)} pts`;
+    $('#pointsBadge').textContent=`${total.toFixed(2)} pts`;
+    $$('#myRows [data-del]').forEach(btn=> btn.onclick=()=>{
+      const id=btn.getAttribute('data-del'); const db=Store.ensure(); const i=db.logs.findIndex(x=>x.id===id && x.userId===Auth.session.userId);
+      if(i>=0){ db.logs.splice(i,1); Store.save(db); renderMyHistory(); renderLeaderboard(); toast('Entry deleted','danger'); }
+    });
+  }
+
+  // Weekly/All-time leaderboard
+  function renderLeaderboard(mode = ($('#boardMode')?.value || 'all')){
+    const db = Store.ensure();
+    let rows = [];
+    if(mode === 'week'){
+      const now = new Date();
+      const from = startOfISOWeek(now);
+      const to   = endOfISOWeek(now);
+      rows = totalsInRange(db, from, to);
+    }else{
+      const totals = Object.entries(userTotals(db))
+        .map(([id,v]) => ({id, ...v}))
+        .sort((a,b)=> b.points - a.points);
+      rows = totals;
+    }
+    const tbody = $('#boardRows'); tbody.innerHTML='';
+    rows.forEach((row,i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td><td>${row.username}</td><td>${row.points.toFixed(2)}</td><td>${row.entries||0}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Annual "Weeks Won" standings
+  function renderWeeksWon(year = (new Date().getFullYear())){
+    const db = Store.ensure();
+    const users = Object.fromEntries(db.users.map(u=>[u.id,u]));
+    const acts  = Object.fromEntries(db.activities.map(a=>[a.id,a]));
+    const weekly = new Map(); // key -> Map(userId -> points)
+
+    for(const l of db.logs){
+      const {year: y, week: w} = isoWeekParts(l.date);
+      if(y !== Number(year)) continue;
+      const key = `${y}-W${String(w).padStart(2,'0')}`;
+      if(!weekly.has(key)) weekly.set(key, new Map());
+      const byUser = weekly.get(key);
+      const user = users[l.userId]; if(!user) continue;
+      const act  = acts[l.activityId]; if(!act) continue;
+
+      const base = calcPoints(act, l.km, l.min);
+      const pts  = +(base*((user.mult)||1)).toFixed(2);
+      byUser.set(l.userId, (byUser.get(l.userId)||0) + pts);
+    }
+
+    // Count wins (ties -> all tied leaders get a win)
+    const wins = new Map(); // userId -> count
+    for(const [, byUser] of weekly){
+      let max = 0;
+      for(const [, pts] of byUser) if(pts > max) max = pts;
+      for(const [uid, pts] of byUser){
+        if(pts === max && max > 0){
+          wins.set(uid, (wins.get(uid)||0) + 1);
+        }
+      }
+    }
+
+    const rows = Array.from(wins.entries())
+      .map(([uid,cnt]) => ({username: users[uid]?.username || '—', cnt}))
+      .sort((a,b)=> b.cnt - a.cnt || a.username.localeCompare(b.username));
+
+    const tbody = $('#weeksRows'); tbody.innerHTML = '';
+    rows.forEach((row,i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td><td>${row.username}</td><td>${row.cnt}</td>`;
+      tbody.appendChild(tr);
+    });
+    if(rows.length===0){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="3" class="help">No weekly winners yet for ${year}. Log some activities and snag Week 1!</td>`;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function renderStory(){
+    const db=Store.ensure(); const me=db.users.find(u=>u.id===Auth.session?.userId);
+    const mult=Math.max(0, Number(me?.mult||1));
+    $('#storyMult').textContent='x'+mult.toFixed(2);
+    const tb=$('#storyRows'); tb.innerHTML='';
+    for(const a of db.activities){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${a.icon||''} ${a.name}</td><td>${a.ppk}</td><td>${a.ppm}</td><td>${(a.ppk*mult).toFixed(2)}</td><td>${(a.ppm*mult).toFixed(2)}</td>`;
+      tb.appendChild(tr);
+    }
+  }
+  function setStreak(){
+    const db=Store.ensure(); const me=Auth.session.userId;
+    const dates=new Set(db.logs.filter(l=>l.userId===me).map(l=>l.date));
+    let streak=0; let day=new Date(); day.setHours(0,0,0,0);
+    for(let i=0;i<365;i++){ const key=day.toISOString().slice(0,10); if(dates.has(key)){ streak++; day.setDate(day.getDate()-1); } else break; }
+    $('#streakPill').textContent=`🔥 ${streak}-day streak`;
+  }
+
+  // ------- Admin -------
+  async function upsertUser({username,password,isAdmin,mult}){
+    username=username.trim(); if(!username||!password) return;
+    const db=Store.ensure(); let u=db.users.find(x=>x.username.toLowerCase()===username.toLowerCase());
+    const salt=newSalt(); const hash=await pbkdf2(password,salt); const m=isNaN(mult)?1:Math.max(0, Number(mult));
+    if(u){ u.salt=salt; u.hash=hash; u.isAdmin=!!isAdmin; u.mult=m; toast('User updated','ok'); }
+    else { u={id:uid(),username,isAdmin:!!isAdmin,mult:m,salt,hash}; db.users.push(u); toast('User created','ok'); }
+    Store.save(db); renderAdminUsers(); renderLeaderboard(); renderWeeksWon(Number($('#weeksYear')?.value || new Date().getFullYear())); renderStory();
+  }
+  async function modifyUser(id,action){
+    const db=Store.ensure(); const me=Auth.session.userId; const idx=db.users.findIndex(u=>u.id===id); if(idx<0) return;
+    if(action==='delete'){
+      if(db.users[idx].id===me) return toast('You cannot delete yourself','danger');
+      db.logs=db.logs.filter(l=>l.userId!==id); db.users.splice(idx,1);
+      Store.save(db); renderAdminUsers(); renderAllLogs(); renderLeaderboard(); renderWeeksWon(Number($('#weeksYear')?.value || new Date().getFullYear())); renderStory(); toast('User deleted','danger');
+    }else if(action==='toggleAdmin'){
+      db.users[idx].isAdmin=!db.users[idx].isAdmin; Store.save(db); renderAdminUsers(); toast('Role updated','ok');
+    }else if(action==='resetPw'){
+      const newPw=prompt('Enter new temporary password (8+ chars)'); if(!newPw||newPw.length<8) return;
+      const salt=newSalt(); const hash=await pbkdf2(newPw,salt); db.users[idx].salt=salt; db.users[idx].hash=hash; Store.save(db); toast('Password reset','ok');
+    }
+  }
+  function renderAdminUsers(){
+    const db=Store.ensure(); const tb=$('#userRows'); tb.innerHTML=''; db.users.sort((a,b)=>a.username.localeCompare(b.username));
+    for(const u of db.users){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${u.username}</td><td>${u.isAdmin?'Admin':'Participant'}</td><td>${(u.mult??1).toFixed(2)}</td>
+      <td class="row">
+        <button class="btn small" data-reset="${u.id}">Reset PW</button>
+        <button class="btn small ghost" data-toggle="${u.id}">${u.isAdmin?'Remove admin':'Make admin'}</button>
+        <button class="btn small warn" data-del="${u.id}">Delete</button>
+      </td>`;
+      tb.appendChild(tr);
+    }
+    $$('#userRows [data-del]').forEach(b=>b.onclick=()=>modifyUser(b.getAttribute('data-del'),'delete'));
+    $$('#userRows [data-toggle]').forEach(b=>b.onclick=()=>modifyUser(b.getAttribute('data-toggle'),'toggleAdmin'));
+    $$('#userRows [data-reset]').forEach(b=>b.onclick=()=>modifyUser(b.getAttribute('data-reset'),'resetPw'));
+  }
+  function upsertActivity({id,name,icon,ppk,ppm}){
+    const db=Store.ensure();
+    if(id){ const a=db.activities.find(x=>x.id===id); if(!a) return; a.name=name; a.icon=icon; a.ppk=+ppk; a.ppm=+ppm; toast('Activity updated','ok'); }
+    else { db.activities.push({id:uid(),name,icon,ppk:+ppk,ppm:+ppm}); toast('Activity added','ok'); }
+    Store.save(db); renderActivitiesSelect(); renderAdminActivities(); renderLeaderboard(); renderWeeksWon(Number($('#weeksYear')?.value || new Date().getFullYear())); renderStory();
+  }
+  function modifyActivity(id,action){
+    const db=Store.ensure();
+    if(action==='delete'){
+      const used=db.logs.some(l=>l.activityId===id); if(used) return toast('Cannot delete: activity used in logs','warn');
+      db.activities=db.activities.filter(a=>a.id!==id); Store.save(db); renderActivitiesSelect(); renderAdminActivities(); renderStory(); toast('Activity deleted','danger');
+    }else if(action==='edit'){
+      const a=db.activities.find(a=>a.id===id); if(!a) return;
+      $('#activityForm [name="name"]').value=a.name; $('#activityForm [name="icon"]').value=a.icon||''; $('#activityForm [name="ppk"]').value=a.ppk; $('#activityForm [name="ppm"]').value=a.ppm;
+      $('#activityForm').dataset.editing=id; $('#activityForm button[type="submit"]').textContent='Save changes';
+    }
+  }
+  function renderAdminActivities(){
+    const db=Store.ensure(); const tb=$('#activityRows'); tb.innerHTML='';
+    for(const a of db.activities){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${a.icon||''} ${a.name}</td><td>${a.ppk}</td><td>${a.ppm}</td>
+      <td class="row"><button class="btn small" data-edit="${a.id}">Edit</button><button class="btn small warn" data-del="${a.id}">Delete</button></td>`;
+      tb.appendChild(tr);
+    }
+    $$('#activityRows [data-del]').forEach(b=>b.onclick=()=>modifyActivity(b.getAttribute('data-del'),'delete'));
+    $$('#activityRows [data-edit]').forEach(b=>b.onclick=()=>modifyActivity(b.getAttribute('data-edit'),'edit'));
+  }
+  function renderAllLogs(){
+    const db=Store.ensure(); const tb=$('#allLogsRows'); tb.innerHTML='';
+    const acts=Object.fromEntries(db.activities.map(a=>[a.id,a])); const users=Object.fromEntries(db.users.map(u=>[u.id,u]));
+    const sorted=[...db.logs].sort((a,b)=> b.date.localeCompare(a.date));
+    for(const l of sorted){
+      const act=acts[l.activityId]; const u=users[l.userId]; const base=calcPoints(act,l.km,l.min); const pts=+(base*((u?.mult)||1)).toFixed(2);
+      const tr=document.createElement('tr'); tr.innerHTML=`<td>${l.date}</td><td>${u?.username||''}</td><td>${act?.name||''}</td><td>${l.km??''}</td><td>${l.min??''}</td><td>${pts}</td>`;
+      tb.appendChild(tr);
+    }
+  }
+
+  // ------- Analytics -------
+  function renderAnalytics(){
+    const db=Store.ensure(); const me=Auth.session?.userId; if(!me) return;
+    const range=$('#analyticsRange')?.value || 'week';
+    const now=new Date(); let from=new Date(now);
+    if(range==='week'){ const d=(now.getDay()+6)%7; from.setDate(now.getDate()-d); from.setHours(0,0,0,0); }
+    else if(range==='month'){ from=new Date(now.getFullYear(), now.getMonth(), 1); }
+    else if(range==='year'){ from=new Date(now.getFullYear(), 0, 1); }
+    const acts=Object.fromEntries(db.activities.map(a=>[a.id,a])); const byAct={};
+    for(const l of db.logs){
+      if(l.userId!==me) continue; if(new Date(l.date)<from) continue;
+      const a=acts[l.activityId]; if(!a) continue;
+      const u=db.users.find(x=>x.id===l.userId); const base=calcPoints(a,l.km,l.min);
+      const pts=+(base*((u?.mult)||1)).toFixed(2); byAct[a.name]=(byAct[a.name]||0)+pts;
+    }
+    const labels=Object.keys(byAct); const values=labels.map(k=>byAct[k]);
+    drawHorizontalBars($('#barCanvas'), labels, values);
+    const total=values.reduce((a,b)=>a+b,0);
+    let msg='–';
+    if(range==='week') msg = total>=160?'🏆 Legend mode': total>=120?'🎉 Great week': total>=60?'🙂 Slow-and-steady week':'🌱 Fresh start — let’s go!';
+    else if(range==='month') msg = total>=600?'🏆 Legend month': total>=400?'🎉 Great month': total>=200?'🙂 Slow-and-steady month':'🌱 Fresh month — you got this!';
+    else msg = total>=5000?'🏆 Legend year': total>=3000?'🎉 Great year': total>=1500?'🙂 Slow-and-steady year':'🌱 New chapter — onward!';
+    $('#analyticsMsg').textContent=msg;
+  }
+  function drawHorizontalBars(canvas, labels, values){
+    const ctx=canvas.getContext('2d'); const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const max=Math.max(1, ...values);
+    const barH=Math.max(18, Math.min(36, Math.floor((H-30)/Math.max(1,labels.length))));
+    const gap=10; let y=20;
+    ctx.font='12px system-ui, -apple-system, Segoe UI, Roboto'; ctx.fillStyle='rgba(229,231,235,0.9)';
+    labels.forEach((label,i)=>{
+      const v=values[i]; const w=Math.round((W-200)*(v/max));
+      ctx.fillStyle='rgba(229,231,235,0.9)'; ctx.fillText(label, 12, y+barH*0.7);
+      ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(140, y, W-200, barH);
+      ctx.fillStyle='rgba(96,165,250,0.95)'; ctx.fillRect(140, y, w, barH);
+      ctx.fillStyle='rgba(229,231,235,0.85)'; ctx.fillText(v.toFixed(1)+' pts', 150+w, y+barH*0.7);
+      y+=barH+gap;
+    });
+    if(labels.length===0){ ctx.fillStyle='rgba(229,231,235,0.6)'; ctx.fillText('No activity logged in this range.', 16, 40); }
+  }
+
+  // ------- Events & Init -------
+  function bindAuth(){
+    const db=Store.load();
+    const firstRun=!db || (db.users||[]).length===0;
+    $('#firstRunBox').classList.toggle('hide', !firstRun);
+    $('#setupForm').classList.toggle('hide', !firstRun);
+    $('#loginForm').classList.toggle('hide', firstRun);
+
+    $('#setupForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd=new FormData(e.target);
+      const username=(fd.get('username')||'admin').toString();
+      const password=(fd.get('password')||'').toString();
+      if(password.length<8){ $('#loginMsg').textContent='Password must be at least 8 characters'; return; }
+      const db=defaults(); const salt=newSalt(); const hash=await pbkdf2(password,salt);
+      db.users.push({id:uid(),username,isAdmin:true,mult:1,salt,hash});
+      Store.save(db); toast('Admin configured','ok'); location.reload();
+    });
+
+    $('#loginForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      $('#loginMsg').textContent='';
+      const fd=new FormData(e.target);
+      const sess=await Auth.login(String(fd.get('username')), String(fd.get('password')));
+      if(!sess){ $('#loginMsg').textContent='Invalid username or password'; return; }
+      postLogin();
+    });
+  }
+
+  function postLogin(){
+    views.setNavVisible(true);
+    renderUserChip(); renderActivitiesSelect();
+    $('#logDate').value=todayStr();
+    views.show('dashboard');
+    renderMyHistory(); renderLeaderboard($('#boardMode')?.value || 'all'); renderWeeksWon(Number($('#weeksYear')?.value || new Date().getFullYear()));
+    renderAdminUsers(); renderAdminActivities(); renderAllLogs(); setStreak(); renderStory(); renderAnalytics();
+  }
+
+  function bindNav(){
+    $('#logoutBtn').onclick=()=>{Auth.logout(); location.reload();};
+    $$('#tabs .tab').forEach(t=> t.onclick=()=> views.show(t.dataset.view));
+  }
+
+  function bindDashboard(){
+    const updatePreview=()=>{
+      const db=Store.ensure(); const act=db.activities.find(a=>a.id===$('#activitySelect').value);
+      const km=$('#logKm').value, min=$('#logMin').value; const base=calcPoints(act,km,min);
+      const me=db.users.find(u=>u.id===Auth.session.userId);
+      $('#logPointsPreview').textContent=`${+(base*(me?.mult||1)).toFixed(2)} pts`;
+    };
+    $('#logForm').addEventListener('input', updatePreview);
+    $('#activitySelect').addEventListener('change', updatePreview);
+
+    $('#logForm').addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const db=Store.ensure(); const fd=new FormData(e.target);
+      const activityId=String(fd.get('activityId')), date=String(fd.get('date'))||todayStr();
+      const km=parseFloat(fd.get('distance')||'0')||0, min=parseInt(fd.get('minutes')||'0')||0;
+      if(km<=0 && min<=0){toast('Enter distance and/or time','warn'); return;}
+      const act=db.activities.find(a=>a.id===activityId); const base=calcPoints(act,km,min);
+      const me=db.users.find(u=>u.id===Auth.session.userId);
+      db.logs.push({id:uid(),userId:me.id,activityId,date,km,min,notes:String(fd.get('notes')||'')});
+      Store.save(db);
+      $('#logKm').value=''; $('#logMin').value=''; $('#logNotes').value='';
+      renderMyHistory(); renderLeaderboard($('#boardMode')?.value || 'all'); renderWeeksWon(Number($('#weeksYear')?.value || new Date().getFullYear())); renderAllLogs(); setStreak(); renderAnalytics();
+      const pts=+(base*(me?.mult||1)).toFixed(2), quip=getQuip(act?.name||'Activity',pts);
+      toast(`+${pts} pts • ${quip}`,'ok');
+      const avatarSrc=me?.avatar || initialsAvatar(me?.username||'User');
+      showActivityAnimation(act?.name||'Activity', avatarSrc, quip, 10000);
+    });
+  }
+
+  function bindAdmin(){
+    $('#userForm').addEventListener('submit', async (e)=>{
+      e.preventDefault(); const fd=new FormData(e.target);
+      await upsertUser({username:String(fd.get('username')||''),password:String(fd.get('password')||''),isAdmin:!!fd.get('isAdmin'),mult:Number(fd.get('mult')||1)});
+      e.target.reset();
+    });
+    $('#activityForm').addEventListener('submit',(e)=>{
+      e.preventDefault(); const fd=new FormData(e.target); const editing=e.target.dataset.editing||null;
+      upsertActivity({id:editing,name:String(fd.get('name')||''),icon:String(fd.get('icon')||''),ppk:Number(fd.get('ppk')||0),ppm:Number(fd.get('ppm')||0)});
+      e.target.reset(); e.target.dataset.editing=''; $('#activityForm button[type="submit"]').textContent='Add / Update';
+    });
+  }
+
+  function bindSettings(){
+    $('#exportBtn').onclick=()=>{const blob=new Blob([Store.export()],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='family-fitness-data.json'; a.click(); URL.revokeObjectURL(a.href);};
+    $('#importBtn').onclick=()=>$('#importInput').click();
+    $('#importInput').onchange=async e=>{const f=e.target.files?.[0]; if(!f) return; const text=await f.text(); const ok=Store.import(text); if(ok){toast('Data imported','ok'); location.reload();} else toast('Import failed','danger');};
+    $('#passForm').addEventListener('submit', async (e)=>{
+      e.preventDefault(); const fd=new FormData(e.target);
+      const res=await Auth.changePassword(String(fd.get('old')||''),String(fd.get('new')||'')); $('#passMsg').textContent=res.ok?'Password updated ✓':res.msg;
+      if(res.ok) e.target.reset();
+    });
+    // Avatar upload/remove
+    $('#avatarForm').addEventListener('submit', async (e)=>{
+      e.preventDefault(); const file=$('#avatarInput').files?.[0]; if(!file){toast('Choose an image first','warn'); return;}
+      const reader=new FileReader(); reader.onload=()=>{const db=Store.ensure(); const me=db.users.find(u=>u.id===Auth.session.userId); if(!me) return; me.avatar=reader.result; Store.save(db); renderUserChip(); toast('Avatar updated','ok');}; reader.readAsDataURL(file);
+    });
+    $('#avatarRemove').onclick=()=>{const db=Store.ensure(); const me=db.users.find(u=>u.id===Auth.session.userId); if(!me) return; delete me.avatar; Store.save(db); renderUserChip(); toast('Avatar removed','ok');};
+  }
+
+  function motd(){
+    const lines=[
+      'Tip: Consistency beats intensity. Log something daily.',
+      'Hydrate 🌊 Points are cool, health is cooler.',
+      'Short on time? 10 minutes still counts.',
+      'Walking is winning. Steps add up.'
+    ];
+    $('#motd').textContent=lines[(new Date().getDay())%lines.length];
+  }
+
+  // Boot
+  (async function boot(){
+    await seedAdminIfEmpty();
+    bindAuth(); bindNav(); bindDashboard(); bindAdmin(); bindSettings(); motd();
+
+    // Leaderboard selectors
+    const curYear = new Date().getFullYear();
+    const weeksYearEl = $('#weeksYear');
+    if(weeksYearEl){
+      weeksYearEl.value = curYear;
+      weeksYearEl.addEventListener('change', ()=> renderWeeksWon(Number(weeksYearEl.value)));
+      weeksYearEl.addEventListener('input',  ()=> renderWeeksWon(Number(weeksYearEl.value)));
+    }
+    $('#boardMode')?.addEventListener('change', ()=> renderLeaderboard($('#boardMode').value));
+    $('#refreshBoard')?.addEventListener('click', ()=>{
+      renderLeaderboard($('#boardMode')?.value || 'all');
+      renderWeeksWon(Number($('#weeksYear')?.value || new Date().getFullYear()));
+    });
+
+    $('#analyticsRange')?.addEventListener('change', renderAnalytics);
+    $('#historySearch')?.addEventListener('input', renderMyHistory);
+
+    const sess=Auth.restore(); if(sess){ views.setNavVisible(true); postLogin(); }
+  })();
+  </script>
+</body>
+</html>
